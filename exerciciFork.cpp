@@ -24,7 +24,7 @@ int main(int argc, char **argv)
             printf("procés fill: comptador=%d\n", ++comptador);
 	    sleep(1);
         }
-        //int status = system("firefox");
+        int status = system("firefox");
     } else if (pid > 0) {
         // procés pare
 	std::cout<<"PID Actual pare: "<<getpid()<<std::endl;
