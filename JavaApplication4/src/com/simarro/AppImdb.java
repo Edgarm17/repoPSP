@@ -10,6 +10,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -24,8 +25,21 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @author Edgar
  */
 public class AppImdb {
+	
+	public static void goToURL(String URL) throws URISyntaxException, IOException{
+        if (java.awt.Desktop.isDesktopSupported()) {
+         java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
 
-    public static void main(String[] args) throws MalformedURLException, IOException, InterruptedException {
+         if (desktop.isSupported(java.awt.Desktop.Action.BROWSE)) {
+             
+                 java.net.URI uri = new java.net.URI(URL);
+                 desktop.browse(uri);
+              
+         }
+     }
+ }
+
+    public static void main(String[] args) throws MalformedURLException, IOException, InterruptedException, URISyntaxException {
     	File html = new File("pelicules.html");
     	FileWriter fw = new FileWriter(html);
     	PrintWriter pw = new PrintWriter(fw);
@@ -62,6 +76,8 @@ public class AppImdb {
         }
         pw.println("</body></html>");
         pw.close();
+        
+        goToURL("file://"+html.getAbsolutePath());
         
     }
 
