@@ -4,8 +4,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.concurrent.Semaphore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -38,11 +36,11 @@ public class ActivitatProductorConsumidorEdgar {
         }
 
         public void run() {
-            while (produits <= 20) {
+            for (int i = 0; i < 20; i++) {
                 try {
-                    	BUITS.release();
-                        
+                    	BUITS.acquire();
                         MUTEX.acquire();
+                        
                         int num = (int) (Math.random() * 100);
                         cua.add(num);
                         produits++;
@@ -56,13 +54,14 @@ public class ActivitatProductorConsumidorEdgar {
 
                         Thread.sleep((long) (Math.random() * 900));
                         MUTEX.release();
+                        PLENS.release();
                         
                     
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(ActivitatProductorConsumidorEdgar.class.getName()).log(Level.SEVERE, null, ex);
+                    ex.printStackTrace();
                 }
             }
-
+                
         }
     }
 
@@ -76,12 +75,13 @@ public class ActivitatProductorConsumidorEdgar {
 
         public void run() {
            
-            while (consumits <= 20) {
+            for (int i = 0; i < 20; i++) {
                 try {
                     
+                    PLENS.acquire();
                     MUTEX.acquire();
-                    if (cua.size()>0) {
-                        cua.pollFirst();
+                    
+                        int extraido = cua.pollFirst();
                         consumits++;
                         Iterator<Integer> it = cua.iterator();
                         System.out.print("Hem consumit (C" + id + "): ");
@@ -92,15 +92,12 @@ public class ActivitatProductorConsumidorEdgar {
                         System.out.println(":: Consumits: " + consumits);
                         
                         MUTEX.release();
+                        BUITS.release();
                         
-                        
-                    } else {
-                        MUTEX.release();
-                        
-                    }
+                   
                     Thread.sleep((long) (Math.random() * 1000));
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(ActivitatProductorConsumidorEdgar.class.getName()).log(Level.SEVERE, null, ex);
+                    ex.printStackTrace();
                 }
             }
             

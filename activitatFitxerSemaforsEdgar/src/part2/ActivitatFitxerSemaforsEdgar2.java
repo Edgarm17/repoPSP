@@ -5,7 +5,6 @@
  */
 package part2;
 
-import activitatfitxersemaforsedgar.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,7 +15,6 @@ import java.io.PrintWriter;
 import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 /**
  *
@@ -25,58 +23,55 @@ import java.util.stream.Stream;
 public class ActivitatFitxerSemaforsEdgar2 {
 
     private static File arxiu = new File("linies.txt");
+    private static File nouArxiu = new File("liniescanviades.txt");
 
-    
     private static final Semaphore MUTEX = new Semaphore(1);
     private static final Semaphore PARELL_ESCRIT = new Semaphore(0);
     private static final Semaphore IMPARELL_ESCRIT = new Semaphore(1);
 
     public static void main(String[] args) throws IOException {
+
         proces1 p1 = new proces1();
         proces2 p2 = new proces2();
 
         p1.start();
         p2.start();
-    }
 
-   
+    }
 
     static class proces1 extends Thread {
 
-        private File nouArxiu = new File("linescanviades.txt");
+        private String linea;
+        private BufferedReader br;
 
         public proces1() {
-
         }
 
         public void run() {
             try {
-                
-                System.out.println("Proces1");
                 FileReader fr = new FileReader(arxiu);
-                BufferedReader br = new BufferedReader(fr);
+                br = new BufferedReader(fr);
+                linea = br.readLine();
+                do {
 
-                FileWriter fw = new FileWriter(nouArxiu, true);
-                PrintWriter pw = new PrintWriter(fw);
-
-                String linea = br.readLine();
-                while (linea != null) {
                     PARELL_ESCRIT.acquire();
                     MUTEX.acquire();
-                    System.out.println(linea);
-                    
-                    pw.write(linea + "\n");
-                    
-                    
+
+                    if (linea != null) {
+                        System.out.println("Linea: " + linea + " , Thread: " + " IMPARES ");
+                        FileWriter fw = new FileWriter(nouArxiu, true);
+                        PrintWriter pw = new PrintWriter(fw);
+                        pw.write(linea + "\n");
+                        pw.close();
+                    }
+
                     linea = br.readLine();
+                    linea = br.readLine();
+
                     MUTEX.release();
                     IMPARELL_ESCRIT.release();
-                }
-
+                } while (linea != null);
                 br.close();
-                pw.close();
-                
-
             } catch (FileNotFoundException ex) {
                 System.err.println("Arxiu no trobat");
             } catch (IOException ex) {
@@ -89,37 +84,35 @@ public class ActivitatFitxerSemaforsEdgar2 {
 
     static class proces2 extends Thread {
 
-        private File nouArxiu = new File("linescanviades.txt");
+        private String linea;
+        private BufferedReader br;
 
         public proces2() {
-
         }
 
         public void run() {
             try {
-
-                
-                System.out.println("Proces 2");
                 FileReader fr = new FileReader(arxiu);
-                BufferedReader br = new BufferedReader(fr);
+                br = new BufferedReader(fr);
+                do {
 
-                FileWriter fw = new FileWriter(nouArxiu, true);
-                PrintWriter pw = new PrintWriter(fw);
-
-                String linea = br.readLine();
-                while (linea != null) {
                     IMPARELL_ESCRIT.acquire();
                     MUTEX.acquire();
-                    System.out.println(linea);
-                    pw.write(linea + "\n");
+
                     linea = br.readLine();
+                    linea = br.readLine();
+                    if (linea != null) {
+                        System.out.println("Linea: " + linea + " , Thread: " + " PARES ");
+                        FileWriter fw = new FileWriter(nouArxiu, true);
+                        PrintWriter pw = new PrintWriter(fw);
+                        pw.write(linea + "\n");
+                        pw.close();
+                    }
+
                     MUTEX.release();
                     PARELL_ESCRIT.release();
-                }
-
+                } while (linea != null);
                 br.close();
-                pw.close();
-                
             } catch (FileNotFoundException ex) {
                 System.err.println("Arxiu no trobat");
             } catch (IOException ex) {
