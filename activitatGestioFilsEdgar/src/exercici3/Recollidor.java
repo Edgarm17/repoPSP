@@ -20,9 +20,6 @@ public class Recollidor {
     public Recollidor() {
     }
     
-//    public synchronized void anyadirValor(int valor){
-//        resultats.add(valor);
-//    }
     
     public synchronized void mostrarSuma(int valor){
         resultats.add(valor);
