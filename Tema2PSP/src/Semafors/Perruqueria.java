@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package activitatperruqueriaedgar;
+package Semafors;
 
 import java.util.concurrent.Semaphore;
 
@@ -11,7 +11,7 @@ import java.util.concurrent.Semaphore;
  *
  * @author Edgar
  */
-public class ActivitatPerruqueriaEdgar {
+public class Perruqueria {
 
     private static final Semaphore CLIENT = new Semaphore(0);
     private static final Semaphore MUTEX = new Semaphore(1);
